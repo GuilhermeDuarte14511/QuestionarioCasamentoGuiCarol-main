@@ -5,11 +5,12 @@
   <title>Guilherme & Caroline - Questionário de Casamento</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
   <style>
     :root {
       --rose-gold: #d8a29d;
@@ -119,11 +120,22 @@
       margin-bottom: 15px;
     }
 
+    .text-muted, #etapaTexto {
+      color: var(--rose-gold) !important;
+    }
+
     footer {
       color: var(--rose-light);
       font-size: 0.9rem;
     }
 
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .step .d-flex {
+      margin-top: 1.5rem;
+    }
   </style>
 </head>
 <body>
@@ -148,7 +160,7 @@
 
       <form id="formulario">
         <h2 class="text-center mb-4">Guilherme & Caroline</h2>
-        <div class="text-right text-muted mb-2" id="etapaTexto">Passo 1 de 4</div>
+        <div class="text-end text-muted mb-2" id="etapaTexto">Passo 1 de 4</div>
         <div id="mensagemErro"></div>
 
         <div class="step" id="step1">
@@ -156,7 +168,7 @@
             <label>Nome completo:</label>
             <input type="text" name="nome" id="nome" class="form-control">
           </div>
-          <div class="text-right">
+          <div class="text-end mt-4">
             <button type="button" class="btn btn-custom" onclick="proximo()">Próximo</button>
           </div>
         </div>
@@ -168,12 +180,12 @@
               <input class="form-check-input" type="checkbox" id="alcoolica">
               <label class="form-check-label">Alcoólicas</label>
             </div>
-            <div class="form-check">
+            <div class="form-check mt-2">
               <input class="form-check-input" type="checkbox" id="naoAlcoolica">
               <label class="form-check-label">Não Alcoólicas (Refrigerante/Suco)</label>
             </div>
           </div>
-          <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between mt-4">
             <button type="button" class="btn btn-outline-light" onclick="voltar()">Voltar</button>
             <button type="button" class="btn btn-custom" onclick="verificaBebidas()">Próximo</button>
           </div>
@@ -186,11 +198,11 @@
               <input class="form-check-input" type="checkbox" name="tipoAlcoolica" value="Chopp">
               <label class="form-check-label">Chopp</label>
             </div>
-            <div class="form-check">
+            <div class="form-check mt-2">
               <input class="form-check-input" type="checkbox" name="tipoAlcoolica" value="Cerveja">
               <label class="form-check-label">Cerveja</label>
             </div>
-            <div class="form-check">
+            <div class="form-check mt-2">
               <input class="form-check-input" type="checkbox" name="tipoAlcoolica" value="Outros">
               <label class="form-check-label">Outros</label>
             </div>
@@ -199,7 +211,7 @@
             <label>Preferência de marca (se tiver):</label>
             <input type="text" class="form-control" name="marca" id="marca">
           </div>
-          <div class="d-flex justify-content-between">
+          <div class="d-flex justify-content-between mt-4">
             <button type="button" class="btn btn-outline-light" onclick="voltar()">Voltar</button>
             <button type="button" class="btn btn-custom" onclick="proximo()">Próximo</button>
           </div>
@@ -216,19 +228,19 @@
           </div>
           <div class="form-group" id="divisaoTransporte" style="display: none;">
             <label id="textoTransporte">Carregando...</label>
-              <select class="form-control mt-2" id="divisao">
+            <select class="form-control mt-2" id="divisao">
               <option value="">Selecione</option>
               <option value="Sim">Sim</option>
               <option value="Não">Não</option>
             </select>
           </div>
-       <div class="d-flex justify-content-between">
-          <button type="button" class="btn btn-outline-light" id="btnVoltar" onclick="voltar()">Voltar</button>
-          <button type="button" class="btn btn-success" id="btnFinalizar" onclick="finalizarFake()">
-            <span id="textFinalizar">Finalizar</span>
-            <span id="spinnerFinalizar" class="spinner-border spinner-border-sm d-none ml-2" role="status" aria-hidden="true"></span>
-          </button>
-        </div>
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-outline-light" id="btnVoltar" onclick="voltar()">Voltar</button>
+            <button type="button" class="btn btn-success" id="btnFinalizar" onclick="finalizarFake()">
+              <span id="textFinalizar">Finalizar</span>
+              <span id="spinnerFinalizar" class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+            </button>
+          </div>
         </div>
       </form>
 
@@ -238,13 +250,13 @@
       </div>
     </div>
   </div>
+
   <footer class="text-center mt-4 mb-3 text-muted small">
     Criado por Guilherme Duarte © 2025
   </footer>
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="./assets/js/site.js"></script>
-
-  </script>
 </body>
 </html>

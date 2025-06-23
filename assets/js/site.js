@@ -39,15 +39,6 @@ function proximo() {
     }
   }
 
-  if (passoAtual === 4) {
-    const transporte = $('#transporte').val();
-    if (!transporte) {
-      mostrarErro('Você não respondeu sobre o transporte.');
-      $('#transporte').focus();
-      return;
-    }
-  }
-
   $(`#step${passoAtual}`).removeClass('active');
   passoAtual++;
   $(`#step${passoAtual}`).addClass('active');
@@ -87,10 +78,23 @@ function verificaBebidas() {
 }
 
 function toggleDivisao() {
-  $('#divisaoTransporte').slideToggle($('#transporte').val() === 'Sim');
+  const transporte = $('#transporte').val();
+  if (transporte === 'Sim') {
+    $('#divisaoTransporte').slideDown();
+    verificarLocalizacaoNovamente();
+  } else {
+    $('#divisaoTransporte').slideUp();
+  }
 }
 
 function finalizarFake() {
+  const transporte = $('#transporte').val();
+  if (!transporte) {
+    mostrarErro('Por favor, selecione se deseja ou não transporte.');
+    $('#transporte').focus();
+    return;
+  }
+
   const btn = document.getElementById('btnFinalizar');
   const text = document.getElementById('textFinalizar');
   const spinner = document.getElementById('spinnerFinalizar');
@@ -107,7 +111,6 @@ function finalizarFake() {
 
   const nome = document.getElementById('nome').value || '';
   const marca = document.getElementById('marca').value || '';
-  const transporte = document.getElementById('transporte')?.value || '';
   const divisao = document.getElementById('divisao')?.value || '';
 
   const bebidasSelecionadas = [];
@@ -131,9 +134,7 @@ function finalizarFake() {
   fetch('https://script.google.com/macros/s/AKfycbzoAxbX2ZCxaQkU6Bo4tRyGek6By0YAS1JXUBVW4Zl-phc_x3Ef_JS4X4g0H-9kFzG8/exec', {
     method: 'POST',
     mode: 'no-cors',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   })
     .then(() => {
@@ -212,7 +213,6 @@ async function obterLocalizacao() {
     } else if (distanciaCara <= 11) {
       local = "a partir de Carapicuíba";
     } else {
-      // Se não estiver em nenhuma região próxima
       complemento = "Percebemos que você não mora tão próximo da gente (Guilherme e Carol). Caso queira algum transporte, nos chame no privado do WhatsApp para conversarmos melhor e vermos a melhor solução ❤️";
     }
 
@@ -227,7 +227,6 @@ async function obterLocalizacao() {
     console.warn("Usuário negou ou erro ao obter localização:", error);
   });
 }
-
 
 function verificarLocalizacaoNovamente() {
   if (!localizacaoDetectada) {
