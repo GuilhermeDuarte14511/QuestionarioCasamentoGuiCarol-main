@@ -210,13 +210,23 @@ async function obterLocalizacao() {
     const urlNominatim = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLon}`;
 
     try {
-      const response = await fetch(urlNominatim);
-      const data = await response.json();
-      enderecoCompleto = data.display_name || '';
-      console.log("Endereço retornado pelo Nominatim:", enderecoCompleto);
-    } catch (err) {
-      console.warn("Erro ao buscar endereço:", err);
-    }
+        const response = await fetch(urlNominatim);
+        const data = await response.json();
+
+        if (data.address) {
+          const rua = data.address.road || data.address.residential || data.address.pedestrian || '';
+          const cidade = data.address.city || data.address.town || data.address.village || '';
+          const estado = data.address.state || '';
+          const cep = data.address.postcode || '';
+          enderecoCompleto = `${rua}, ${cidade} - ${estado}, ${cep}`;
+        } else {
+          enderecoCompleto = '';
+        }
+
+        console.log("Endereço básico formatado:", enderecoCompleto);
+      } catch (err) {
+        console.warn("Erro ao buscar endereço:", err);
+      }
 
     if (distanciaCara <= 15 && distanciaCara < distanciaJacira) {
       $("#textoTransporte").html(`
