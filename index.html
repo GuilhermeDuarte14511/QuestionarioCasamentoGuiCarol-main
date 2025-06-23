@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Guilherme & Caroline - Questionário de Casamento</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --rose-gold: #d8a29d;
+      --rose-light: #f4c2c2;
+      --rose-dark: #b76e79;
+      --gold: #ffd700;
+      --bg-dark: #121212;
+      --bg-box: #1a1a1a;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--rose-light);
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    h2, h5 {
+      font-family: 'Great Vibes', cursive;
+      color: var(--rose-gold);
+    }
+
+    .topo-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--gold);
+    }
+
+    .container-box {
+      background-color: var(--bg-box);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(255, 192, 203, 0.15);
+    }
+
+    .step, #formulario, #mensagemFinal {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+      animation: fadeIn 0.7s;
+    }
+
+    #telaBoasVindas {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-custom {
+      background-color: var(--rose-dark);
+      color: #fff;
+      border: none;
+      box-shadow: 0 0 8px var(--rose-gold);
+    }
+
+    .btn-custom:hover,
+    .btn-success:hover {
+      background-color: var(--rose-gold);
+      color: #000;
+    }
+
+    .btn-success {
+      background-color: var(--rose-light);
+      color: #000;
+      border: none;
+    }
+
+    select, input, textarea {
+      background-color: #2b2b2b;
+      color: var(--rose-light);
+      border: 1px solid var(--rose-gold);
+    }
+
+    input:focus, select:focus {
+      box-shadow: 0 0 8px var(--rose-light);
+    }
+
+    .form-check-label, label {
+      font-weight: 500;
+      color: var(--rose-light);
+    }
+
+    .form-check-input:checked {
+      background-color: var(--rose-gold);
+      border-color: var(--rose-gold);
+    }
+
+    .progress {
+      height: 8px;
+      background-color: #333;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      background-color: var(--rose-gold);
+    }
+
+    #mensagemErro {
+      display: none;
+      color: #ff7272;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container mt-5">
+    <div class="container-box">
+
+      <div id="telaBoasVindas" class="text-center animate__animated animate__fadeIn">
+        <h2 class="topo-logo mb-3">Guilherme & Caroline</h2>
+        <p class="lead">
+          Estamos muito felizes em compartilhar esse momento com você!<br>
+          Responda esse pequeno questionário para nos ajudar a planejar tudo com muito carinho.
+        </p>
+        <div class="text-center mt-4">
+          <button class="btn btn-custom btn-lg" onclick="iniciarFormulario()">Começar 💌</button>
+        </div>
+      </div>
+
+      <div class="progress" id="barraContainer">
+        <div class="progress-bar" id="barraProgresso" style="width: 25%;"></div>
+      </div>
+
+      <form id="formulario">
+        <h2 class="text-center mb-4">Guilherme & Caroline</h2>
+        <div class="text-right text-muted mb-2" id="etapaTexto">Passo 1 de 4</div>
+        <div id="mensagemErro"></div>
+
+        <div class="step" id="step1">
+          <div class="form-group">
+            <label>Nome completo:</label>
+            <input type="text" name="nome" id="nome" class="form-control">
+          </div>
+          <div class="text-right">
+            <button type="button" class="btn btn-custom" onclick="proximo()">Próximo</button>
+          </div>
+        </div>
+
+        <div class="step" id="step2">
+          <div class="form-group">
+            <label>Qual bebida irá consumir?</label><br>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="alcoolica">
+              <label class="form-check-label">Alcoólicas</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="naoAlcoolica">
+              <label class="form-check-label">Não Alcoólicas (Refrigerante/Suco)</label>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-light" onclick="voltar()">Voltar</button>
+            <button type="button" class="btn btn-custom" onclick="verificaBebidas()">Próximo</button>
+          </div>
+        </div>
+
+        <div class="step" id="step3">
+          <div class="form-group">
+            <label>Quais bebidas alcoólicas você prefere?</label><br>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="tipoAlcoolica" value="Chopp">
+              <label class="form-check-label">Chopp</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="tipoAlcoolica" value="Cerveja">
+              <label class="form-check-label">Cerveja</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" name="tipoAlcoolica" value="Outros">
+              <label class="form-check-label">Outros</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Preferência de marca (se tiver):</label>
+            <input type="text" class="form-control" name="marca" id="marca">
+          </div>
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-light" onclick="voltar()">Voltar</button>
+            <button type="button" class="btn btn-custom" onclick="proximo()">Próximo</button>
+          </div>
+        </div>
+
+        <div class="step" id="step4">
+          <div class="form-group">
+            <label>Você vai precisar de transporte?</label>
+            <select class="form-control" id="transporte" onchange="toggleDivisao()">
+              <option value="">Selecione</option>
+              <option value="Sim">Sim</option>
+              <option value="Não">Não</option>
+            </select>
+          </div>
+          <div class="form-group" id="divisaoTransporte" style="display: none;">
+            <label id="textoTransporte">Carregando...</label>
+              <select class="form-control mt-2" id="divisao">
+              <option value="">Selecione</option>
+              <option value="Sim">Sim</option>
+              <option value="Não">Não</option>
+            </select>
+          </div>
+       <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-light" id="btnVoltar" onclick="voltar()">Voltar</button>
+          <button type="button" class="btn btn-success" id="btnFinalizar" onclick="finalizarFake()">
+            <span id="textFinalizar">Finalizar</span>
+            <span id="spinnerFinalizar" class="spinner-border spinner-border-sm d-none ml-2" role="status" aria-hidden="true"></span>
+          </button>
+        </div>
+        </div>
+      </form>
+
+      <div id="mensagemFinal" class="text-center mt-5 animate__animated animate__fadeIn">
+        <h2 class="text-success animate__animated animate__zoomIn">🎉 Obrigado por responder!</h2>
+        <p class="lead animate__animated animate__fadeInUp">Guilherme & Caroline estão ansiosos para compartilhar esse momento com você! 💍</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/javascript/site.js"></script>
+
+  </script>
+</body>
+</html>
