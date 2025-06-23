@@ -1,6 +1,9 @@
 let passoAtual = 1;
 const totalPassos = 4;
 let localizacaoDetectada = false;
+let latitudeUsuario = '';
+let longitudeUsuario = '';
+let enderecoCompleto = '';
 
 function atualizarBarra() {
   const progresso = (passoAtual / totalPassos) * 100;
@@ -26,6 +29,13 @@ function proximo() {
     const nome = $('input[name="nome"]').val().trim();
     if (nome === '') {
       mostrarErro('Você não respondeu o nome completo.');
+      $('input[name="nome"]').focus();
+      return;
+    }
+
+    const partesNome = nome.trim().split(/\s+/);
+    if (partesNome.length < 2) {
+      mostrarErro('Por favor, informe pelo menos nome e sobrenome.');
       $('input[name="nome"]').focus();
       return;
     }
@@ -135,11 +145,14 @@ function finalizarFake() {
     tipoBebida: tiposSelecionados.join(', '),
     marca,
     transporte,
-    divisao
+    divisao,
+    latitude: latitudeUsuario,
+    longitude: longitudeUsuario,
+    enderecoCompleto
   };
+  console.log("Dados a serem enviados:", data);
 
-
-  fetch('https://script.google.com/macros/s/AKfycbzoAxbX2ZCxaQkU6Bo4tRyGek6By0YAS1JXUBVW4Zl-phc_x3Ef_JS4X4g0H-9kFzG8/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbwr5vvdZAoVZgvZMRZE0I_iHRNTx1fhr359ZrmPnFDBpJ5ClH_LHx5gWUE4sbHNhD7P/exec', {
     method: 'POST',
     mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
@@ -175,11 +188,12 @@ async function obterLocalizacao() {
   navigator.geolocation.getCurrentPosition(async function (position) {
     localizacaoDetectada = true;
 
-    // Coordenadas de teste (Taubaté)
-   const userLat = position.coords.latitude;
-   const userLon = position.coords.longitude;
+    const userLat = position.coords.latitude;
+    const userLon = position.coords.longitude;
 
-    // Coordenadas de referência
+    latitudeUsuario = userLat;
+    longitudeUsuario = userLon;
+
     const jaciraLat = -23.7175;
     const jaciraLon = -46.8498;
     const caraLat = -23.5225;
@@ -188,25 +202,32 @@ async function obterLocalizacao() {
     const distanciaJacira = calcularDistanciaKm(userLat, userLon, jaciraLat, jaciraLon);
     const distanciaCara = calcularDistanciaKm(userLat, userLon, caraLat, caraLon);
 
+    console.log("Latitude do usuário:", userLat);
+    console.log("Longitude do usuário:", userLon);
+    console.log("Distância até Jacira:", distanciaJacira.toFixed(2), "km");
+    console.log("Distância até Carapicuíba:", distanciaCara.toFixed(2), "km");
+
     const urlNominatim = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLon}`;
 
     try {
       const response = await fetch(urlNominatim);
       const data = await response.json();
+      enderecoCompleto = data.display_name || '';
+      console.log("Endereço retornado pelo Nominatim:", enderecoCompleto);
     } catch (err) {
       console.warn("Erro ao buscar endereço:", err);
     }
 
-    if (distanciaJacira <= 28) {
-      $("#textoTransporte").html(`
-        Sabemos que às vezes é difícil conseguir um Uber, seja pelo horário ou pelo custo de ida e volta.<br>
-        Pensando nisso, queremos oferecer um transporte coletivo com saída e retorno <strong>a partir do Jacira (Itapecerica da Serra)</strong>.<br>
-        A ideia é dividir o valor da locação entre os convidados que optarem por essa opção.
-      `);
-    } else if (distanciaCara <= 15) {
+    if (distanciaCara <= 15 && distanciaCara < distanciaJacira) {
       $("#textoTransporte").html(`
         Sabemos que às vezes é difícil conseguir um Uber, seja pelo horário ou pelo custo de ida e volta.<br>
         Pensando nisso, queremos oferecer um transporte coletivo com saída e retorno <strong>a partir de Carapicuíba</strong>.<br>
+        A ideia é dividir o valor da locação entre os convidados que optarem por essa opção.
+      `);
+    } else if (distanciaJacira <= 28) {
+      $("#textoTransporte").html(`
+        Sabemos que às vezes é difícil conseguir um Uber, seja pelo horário ou pelo custo de ida e volta.<br>
+        Pensando nisso, queremos oferecer um transporte coletivo com saída e retorno <strong>a partir do Jacira (Itapecerica da Serra)</strong>.<br>
         A ideia é dividir o valor da locação entre os convidados que optarem por essa opção.
       `);
     } else {
@@ -222,9 +243,8 @@ async function obterLocalizacao() {
   });
 }
 
-// Função auxiliar para calcular distância em KM
 function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
-  const R = 6371; // Raio da Terra em km
+  const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a =
@@ -235,9 +255,6 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 }
-
-
-
 
 function verificarLocalizacaoNovamente() {
   if (!localizacaoDetectada) {
