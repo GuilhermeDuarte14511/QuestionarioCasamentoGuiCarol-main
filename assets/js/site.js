@@ -214,8 +214,8 @@ async function obterLocalizacao() {
         const data = await response.json();
 
         if (data.address) {
-          const rua = data.address.road || data.address.residential || data.address.pedestrian || '';
-          const cidade = data.address.city || data.address.town || data.address.village || '';
+          const rua = data.address.road || data.address.residential || data.address.pedestrian || data.address.street || data.address.suburb || '';
+          const cidade = data.address.city || data.address.town || data.address.village || data.address.municipality || data.address.county || '';
           const estado = data.address.state || '';
           const cep = data.address.postcode || '';
           enderecoCompleto = `${rua}, ${cidade} - ${estado}, ${cep}`;
