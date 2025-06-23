@@ -1,46 +1,52 @@
 # 💍 QuestionarioCasamentoGuiCarol
 
-Formulário moderno e romântico para os convidados confirmarem presença no casamento de **Guilherme & Caroline**. O site é responsivo, tem estilo em **dark mode com Rose Gold**, animações elegantes, envio de dados para o **Google Sheets**, confetes dourados no final e experiência suave em todas as etapas.
+Formulário moderno e romântico para os convidados confirmarem presença no casamento de **Guilherme & Caroline**.
+
+O site é responsivo, tem estilo em **dark mode com Rose Gold**, animações elegantes, envio de dados para o **Google Sheets**, confetes dourados no final e experiência suave em todas as etapas.
 
 ---
 
 ## ✨ Funcionalidades
 
 - Confirmação de presença com múltiplas perguntas
-- Estilo visual: **Rose Gold + Preto** (tema do casamento)
-- Barra de progresso e navegação por etapas (steps)
-- Opções de bebidas, marcas e transporte coletivo
-- Validações por etapa com mensagens personalizadas
-- Animações com [Animate.css](https://animate.style/)
-- Confete com [Canvas Confetti](https://www.kirilv.com/canvas-confetti/)
-- Envio automático para uma planilha do Google Sheets
-- Compatível com **mobile e desktop**
-- Deploy via GitHub Pages
+- Estilo visual: **Rose Gold + Preto** (tema oficial do casamento)
+- Barra de progresso animada entre etapas (steps)
+- Escolha de bebidas (alcoólicas e não alcoólicas)
+- Marcas preferidas para bebidas alcoólicas
+- Detecção automática de localização para oferecer transporte coletivo (Itapecerica ou Carapicuíba)
+- Mensagem especial se o convidado estiver fora da região
+- Validações de campos por etapa com mensagens personalizadas
+- Botão "Finalizar" só habilita após selecionar transporte
+- Animações suaves com [Animate.css](https://animate.style/)
+- Efeito de confetes dourados ao final com [Canvas Confetti](https://www.kirilv.com/canvas-confetti/)
+- Integração com **Google Sheets** via API pública (Apps Script)
+- Design 100% responsivo (mobile & desktop)
+- Deploy simples via GitHub Pages
 
 ---
 
 ## 🛠 Tecnologias utilizadas
 
-- HTML5 + CSS3 + JavaScript
-- Bootstrap 4.5
-- jQuery
-- FontAwesome
-- Animate.css
-- Canvas Confetti
+- HTML5 + CSS3 + JavaScript (Vanilla)
+- [Bootstrap 5.3.3](https://getbootstrap.com/)
+- [jQuery](https://jquery.com/)
+- [FontAwesome 6](https://fontawesome.com/)
+- [Animate.css](https://animate.style/)
+- [Canvas Confetti](https://www.kirilv.com/canvas-confetti/)
 - Google Apps Script (para integração com planilha)
 
 ---
 
 ## 🔗 Deploy (GitHub Pages)
 
-Este projeto pode ser acessado diretamente por um link público após deploy.
+Este projeto pode ser publicado diretamente via GitHub Pages.
 
-### 📦 Como fazer deploy no GitHub Pages
+### 📦 Como fazer deploy
 
-1. Suba os arquivos em um repositório público (ou privado com GitHub Pro).
-2. Vá em `Settings > Pages`
-3. Selecione a branch `main` e a pasta `/ (root)`
-4. Acesse pela URL gerada, por exemplo:  
+1. Crie um repositório no GitHub com os arquivos do projeto.
+2. Acesse `Settings > Pages`.
+3. Em “Source”, selecione a branch `main` e pasta `/ (root)`.
+4. O GitHub irá gerar uma URL como:  
    `https://seunome.github.io/QuestionarioCasamentoGuiCarol/`
 
 ---
