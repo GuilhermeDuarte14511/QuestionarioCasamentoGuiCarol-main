@@ -95,6 +95,15 @@ function finalizarFake() {
     return;
   }
 
+  if (transporte === "Sim") {
+    const divisao = $('#divisao').val();
+    if (!divisao) {
+      mostrarErro('Por favor, selecione se aceita ou não dividir o valor do transporte.');
+      $('#divisao').focus();
+      return;
+    }
+  }
+
   const btn = document.getElementById('btnFinalizar');
   const text = document.getElementById('textFinalizar');
   const spinner = document.getElementById('spinnerFinalizar');
@@ -129,7 +138,6 @@ function finalizarFake() {
     divisao
   };
 
-  console.log("Enviando os seguintes dados para o Google Sheets: ", data);
 
   fetch('https://script.google.com/macros/s/AKfycbzoAxbX2ZCxaQkU6Bo4tRyGek6By0YAS1JXUBVW4Zl-phc_x3Ef_JS4X4g0H-9kFzG8/exec', {
     method: 'POST',
@@ -138,7 +146,6 @@ function finalizarFake() {
     body: JSON.stringify(data)
   })
     .then(() => {
-      console.log("Dados enviados!");
       $('#formulario').hide();
       $('#barraContainer').hide();
       setTimeout(() => {
@@ -162,75 +169,78 @@ function finalizarFake() {
     });
 }
 
-function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
-
 async function obterLocalizacao() {
   if (!navigator.geolocation) return;
 
   navigator.geolocation.getCurrentPosition(async function (position) {
     localizacaoDetectada = true;
-    let local = "em pontos a definir";
-    let complemento = "";
 
-    const userLat = position.coords.latitude;
-    const userLon = position.coords.longitude;
+    // Coordenadas de teste (Taubaté)
+   const userLat = position.coords.latitude;
+   const userLon = position.coords.longitude;
 
-    console.log("Sua localização detectada:");
-    console.log("Latitude:", userLat);
-    console.log("Longitude:", userLon);
-
-    const itapLat = -23.7175;
-    const itapLon = -46.8498;
+    // Coordenadas de referência
+    const jaciraLat = -23.7175;
+    const jaciraLon = -46.8498;
     const caraLat = -23.5225;
     const caraLon = -46.8356;
 
-    const distanciaItap = calcularDistanciaKm(userLat, userLon, itapLat, itapLon);
+    const distanciaJacira = calcularDistanciaKm(userLat, userLon, jaciraLat, jaciraLon);
     const distanciaCara = calcularDistanciaKm(userLat, userLon, caraLat, caraLon);
 
-    console.log("Distância até Itapecerica:", distanciaItap.toFixed(2), "km");
-    console.log("Distância até Carapicuíba:", distanciaCara.toFixed(2), "km");
+    const urlNominatim = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLon}`;
 
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLon}`);
+      const response = await fetch(urlNominatim);
       const data = await response.json();
-      console.log("Endereço aproximado via Nominatim:", data.address);
     } catch (err) {
       console.warn("Erro ao buscar endereço:", err);
     }
 
-    if (distanciaItap <= 8) {
-      local = "a partir do Jacira (Itapecerica da Serra)";
-    } else if (distanciaCara <= 11) {
-      local = "a partir de Carapicuíba";
+    if (distanciaJacira <= 28) {
+      $("#textoTransporte").html(`
+        Sabemos que às vezes é difícil conseguir um Uber, seja pelo horário ou pelo custo de ida e volta.<br>
+        Pensando nisso, queremos oferecer um transporte coletivo com saída e retorno <strong>a partir do Jacira (Itapecerica da Serra)</strong>.<br>
+        A ideia é dividir o valor da locação entre os convidados que optarem por essa opção.
+      `);
+    } else if (distanciaCara <= 15) {
+      $("#textoTransporte").html(`
+        Sabemos que às vezes é difícil conseguir um Uber, seja pelo horário ou pelo custo de ida e volta.<br>
+        Pensando nisso, queremos oferecer um transporte coletivo com saída e retorno <strong>a partir de Carapicuíba</strong>.<br>
+        A ideia é dividir o valor da locação entre os convidados que optarem por essa opção.
+      `);
     } else {
-      complemento = "Percebemos que você não mora tão próximo da gente (Guilherme e Carol). Caso queira algum transporte, nos chame no privado do WhatsApp para conversarmos melhor e vermos a melhor solução ❤️";
+      $("#textoTransporte").html(`
+        Sabemos que às vezes é difícil conseguir um Uber, seja pelo horário ou pelo custo de ida e volta.<br>
+        Infelizmente, você está um pouco mais distante dos pontos principais de saída, mas queremos muito ajudar!<br>
+        <strong>Fale com a gente no WhatsApp</strong> e veremos juntos a melhor forma de garantir seu transporte com carinho. 💕
+      `);
     }
-
-    $("#textoTransporte").html(`
-      Sabemos que às vezes é difícil conseguir um Uber, seja pelo horário ou pelo custo de ida e volta.<br>
-      Pensando nisso, queremos oferecer um transporte coletivo com saída e retorno <strong>${local}</strong>.<br>
-      A ideia é dividir o valor da locação entre os convidados que optarem por essa opção.<br>
-      ${complemento ? `<em style="color: #ffb6c1;">${complemento}</em>` : ""}
-    `);
   }, function (error) {
     localizacaoDetectada = false;
     console.warn("Usuário negou ou erro ao obter localização:", error);
   });
 }
 
+// Função auxiliar para calcular distância em KM
+function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Raio da Terra em km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+
+
+
 function verificarLocalizacaoNovamente() {
   if (!localizacaoDetectada) {
-    console.log("Tentando solicitar localização novamente...");
     obterLocalizacao();
   }
 }
