@@ -90,10 +90,17 @@ function verificaBebidas() {
 function toggleDivisao() {
   const transporte = $('#transporte').val();
   if (transporte === 'Sim') {
-    $('#divisaoTransporte').slideDown();
+    if (localizacaoDetectada) {
+      $('#divisaoTransporte').slideDown();
+      $('#avisoLocalizacaoFalhou').hide();
+    } else {
+      $('#divisaoTransporte').hide();
+      $('#avisoLocalizacaoFalhou').show();
+    }
     verificarLocalizacaoNovamente();
   } else {
     $('#divisaoTransporte').slideUp();
+    $('#avisoLocalizacaoFalhou').hide();
   }
 }
 
@@ -105,7 +112,7 @@ function finalizarFake() {
     return;
   }
 
-  if (transporte === "Sim") {
+  if (transporte === "Sim" && localizacaoDetectada) {
     const divisao = $('#divisao').val();
     if (!divisao) {
       mostrarErro('Por favor, selecione se aceita ou não dividir o valor do transporte.');
@@ -187,6 +194,7 @@ async function obterLocalizacao() {
 
   navigator.geolocation.getCurrentPosition(async function (position) {
     localizacaoDetectada = true;
+    $('#avisoLocalizacaoFalhou').hide();
 
     const userLat = position.coords.latitude;
     const userLon = position.coords.longitude;
@@ -210,23 +218,23 @@ async function obterLocalizacao() {
     const urlNominatim = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${userLat}&lon=${userLon}`;
 
     try {
-        const response = await fetch(urlNominatim);
-        const data = await response.json();
+      const response = await fetch(urlNominatim);
+      const data = await response.json();
 
-        if (data.address) {
-          const rua = data.address.road || data.address.residential || data.address.pedestrian || data.address.street || data.address.suburb || '';
-          const cidade = data.address.city || data.address.town || data.address.village || data.address.municipality || data.address.county || '';
-          const estado = data.address.state || '';
-          const cep = data.address.postcode || '';
-          enderecoCompleto = `${rua}, ${cidade} - ${estado}, ${cep}`;
-        } else {
-          enderecoCompleto = '';
-        }
-
-        console.log("Endereço básico formatado:", enderecoCompleto);
-      } catch (err) {
-        console.warn("Erro ao buscar endereço:", err);
+      if (data.address) {
+        const rua = data.address.road || data.address.residential || data.address.pedestrian || data.address.street || data.address.suburb || '';
+        const cidade = data.address.city || data.address.town || data.address.village || data.address.municipality || data.address.county || '';
+        const estado = data.address.state || '';
+        const cep = data.address.postcode || '';
+        enderecoCompleto = `${rua}, ${cidade} - ${estado}, ${cep}`;
+      } else {
+        enderecoCompleto = '';
       }
+
+      console.log("Endereço básico formatado:", enderecoCompleto);
+    } catch (err) {
+      console.warn("Erro ao buscar endereço:", err);
+    }
 
     if (distanciaCara <= 15 && distanciaCara < distanciaJacira) {
       $("#textoTransporte").html(`
@@ -250,6 +258,8 @@ async function obterLocalizacao() {
   }, function (error) {
     localizacaoDetectada = false;
     console.warn("Usuário negou ou erro ao obter localização:", error);
+    $('#divisaoTransporte').hide();
+    $('#avisoLocalizacaoFalhou').show();
   });
 }
 
@@ -268,11 +278,16 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
 
 function verificarLocalizacaoNovamente() {
   if (!localizacaoDetectada) {
+    $('#divisaoTransporte').hide();
+    $('#avisoLocalizacaoFalhou').show();
     obterLocalizacao();
+  } else {
+    $('#avisoLocalizacaoFalhou').hide();
   }
 }
 
 window.onload = () => {
   $('#formulario, #mensagemFinal, #barraContainer').hide();
+  $('#avisoLocalizacaoFalhou').hide();
   obterLocalizacao();
 };
